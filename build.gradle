@@ -1,65 +1,67 @@
 import java.nio.file.Files
+
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
-
-apply plugin: 'java'
-apply from: LOGSTASH_CORE_PATH + "/../rubyUtils.gradle"
-
-// ===========================================================================
-// plugin info
-// ===========================================================================
-group                      'org.logstashplugins' // must match the package of the main plugin class
-version                    "${file("VERSION").text.trim()}" // read from required VERSION file
-description                = "Example Java codec implementation"
-pluginInfo.licenses        = ['Apache-2.0'] // list of SPDX license IDs
-pluginInfo.longDescription = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using \$LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
-pluginInfo.authors         = ['Elasticsearch']
-pluginInfo.email           = ['info@elastic.co']
-pluginInfo.homepage        = "http://www.elastic.co/guide/en/logstash/current/index.html"
-pluginInfo.pluginType      = "codec"
-pluginInfo.pluginClass     = "JavaCodecExample"
-pluginInfo.pluginName      = "java_codec_example" // must match the @LogstashPlugin annotation in the main plugin class
-// ===========================================================================
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 buildscript {
     repositories {
         mavenCentral()
         jcenter()
     }
-
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
     }
+}
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'java'
 }
 
 repositories {
     mavenCentral()
 }
 
+apply from: LOGSTASH_CORE_PATH + "/../rubyUtils.gradle"
+
+// ===========================================================================
+// plugin info
+// ===========================================================================
+group 'org.logstashplugins' // must match the package of the main plugin class
+version "${file("VERSION").text.trim()}" // read from required VERSION file
+description = "Example Java codec implementation"
+pluginInfo.licenses = ['Apache-2.0'] // list of SPDX license IDs
+pluginInfo.longDescription = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using \$LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
+pluginInfo.authors = ['Elasticsearch']
+pluginInfo.email = ['info@elastic.co']
+pluginInfo.homepage = "http://www.elastic.co/guide/en/logstash/current/index.html"
+pluginInfo.pluginType = "codec"
+pluginInfo.pluginClass = "JavaCodecExample"
+pluginInfo.pluginName = "java_codec_example" // must match the @LogstashPlugin annotation in the main plugin class
+// ===========================================================================
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 wrapper {
     gradleVersion = '6.6.1'
     distributionUrl = distributionUrl.replace("bin", "all")
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
-
 shadowJar {
-    classifier = null
+    getArchiveClassifier().set(null)
 }
 
 dependencies {
-    compile 'org.apache.logging.log4j:log4j-api:2.9.1'
-    compile 'org.apache.logging.log4j:log4j-core:2.9.1'
-    compile "com.fasterxml.jackson.core:jackson-core:2.9.5"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.9.5"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.9.5"
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.9.5"
-    compile fileTree(dir: LOGSTASH_CORE_PATH, include: "**/logstash-core-?.?.?.jar")
+    implementation 'org.apache.logging.log4j:log4j-api:2.9.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.9.1'
+    implementation "com.fasterxml.jackson.core:jackson-core:2.9.5"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.9.5"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.9.5"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.9.5"
+    implementation fileTree(dir: LOGSTASH_CORE_PATH, include: "**/logstash-core-?.?.?.jar")
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.jruby:jruby-complete:9.1.13.0'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.jruby:jruby-complete:9.1.13.0'
 }
 
 clean {
